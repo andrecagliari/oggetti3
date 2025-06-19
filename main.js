@@ -6,14 +6,13 @@ let bowling = {
     { name: 'Giuseppe', scores: [] }
   ],
 
-  generaPunteggi: function () {
+  assegnaPunteggi: function () {
     this.players.forEach(player => {
       player.scores = [];
       for (let i = 0; i < 10; i++) {
         player.scores.push(Math.floor(Math.random() * 10) + 1);
       }
     });
-    this.calcolaTotali();
   },
 
   calcolaTotali: function () {
@@ -30,48 +29,41 @@ let bowling = {
     for (let i = 0; i < 10; i++) {
       nuovo.scores.push(Math.floor(Math.random() * 10) + 1);
     }
-    nuovo.total = nuovo.scores.reduce((a, b) => a + b, 0);
     this.players.push(nuovo);
   },
 
-  trovaVincitore: function () {
-    this.calcolaTotali();
-    return this.players.reduce((max, player) =>
-      player.total > max.total ? player : max
-    );
+  aggiungiGiocatoreDOM: function () {
+    let nome = document.getElementById('nomeGiocatore').value.trim();
+    if (nome) {
+      this.aggiungiGiocatore(nome);
+      document.getElementById('nomeGiocatore').value = '';
+    }
   },
 
-  classificaFinale: function () {
+  classifica: function () {
     this.calcolaTotali();
-    let ordinati = [...this.players].sort((a, b) => b.total - a.total);
-    let output = '<h3>📋 Classifica Finale:</h3><ol>';
-    ordinati.forEach(player => {
-      output += `<li>${player.name} - ${player.total} punti</li>`;
+    this.players.sort((a, b) => b.total - a.total);
+  },
+
+  getVincitore: function () {
+    const vincitore = this.players[0];
+    document.getElementById('vincitore').innerText = `${vincitore.name} con ${vincitore.total} punti`;
+  },
+
+  mostraClassifica: function () {
+    let ul = document.getElementById('listaClassifica');
+    ul.innerHTML = '';
+    this.players.forEach((player, index) => {
+      let li = document.createElement('li');
+      li.innerText = `${index + 1}. ${player.name} → ${player.total} punti`;
+      ul.appendChild(li);
     });
-    output += '</ol>';
-    document.getElementById('output').innerHTML = output;
   }
 };
 
-function aggiornaOutput() {
-  let html = '<h3>🎯 Giocatori:</h3>';
-  bowling.players.forEach(player => {
-    html += `<p><strong>${player.name}</strong>: ${player.scores.join(', ')} (Totale: ${player.total})</p>`;
-  });
-  document.getElementById('output').innerHTML = html;
-}
-
-function aggiungiGiocatore() {
-  let nome = document.getElementById('nuovoGiocatore').value.trim();
-  if (nome) {
-    bowling.aggiungiGiocatore(nome);
-    aggiornaOutput();
-    document.getElementById('nuovoGiocatore').value = '';
-  }
-}
-
-function mostraVincitore() {
-  let vincitore = bowling.trovaVincitore();
-  document.getElementById('output').innerHTML =
-    `<h3>🏅 Vincitore: ${vincitore.name} con ${vincitore.total} punti! 🏅</h3>`;
-}
+window.onload = () => {
+  bowling.assegnaPunteggi();
+  bowling.classifica();
+  bowling.mostraClassifica();
+  bowling.getVincitore();
+};
