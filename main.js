@@ -3,67 +3,59 @@ let bowling = {
     { name: 'Livio', scores: [] },
     { name: 'Paola', scores: [] },
     { name: 'Filippo', scores: [] },
-    { name: 'Giuseppe', scores: [] }
+    { name: 'Giuseppe', scores: [] },
+    { name: 'Luca', scores: [] },
+    { name: 'Marco', scores: [] },
+    { name: 'Andrea', scores: [] },
+    { name: 'Giorgio', scores: [] },
+    { name: 'Alessandro', scores: [] },
   ],
 
-  assegnaPunteggi: function () {
+  assegna_Punteggi: function () {
     this.players.forEach(player => {
       player.scores = [];
-      for (let i = 0; i < 10; i++) {
-        player.scores.push(Math.floor(Math.random() * 10) + 1);
+      for (let i = 1; i <= 10; i++) {
+        player.scores.push(Math.floor(Math.random() * (10 - 1 + 1) + 1));
       }
+      console.log(player.scores);
+      
     });
   },
 
-  calcolaTotali: function () {
+  nuovo_player: function (nome) {
+    let new_player = { name: nome, scores: [] };
+    for (let i = 1; i <= 10; i++) {
+        new_player.scores.push(Math.floor(Math.random() * (10 - 1 + 1) + 1));
+      }
+      this.players.push(new_player);
+      console.log(new_player.scores);
+  },
+
+  punteggio_Giocatori: function () {
     this.players.forEach(player => {
-      player.total = player.scores.reduce((a, b) => a + b, 0);
+    let tot = player.scores.reduce((acc, num)=> acc + num);
+    player.totale = tot;
+    console.log(player.name + ':'+ player.totale);
+    
+  });
+  this.players.sort((a, b) => b.totale - a.totale);
+  },
+
+  vincitore: function () {
+    let winner = this.players[0];
+    console.log(`Il vincitore è: ${winner.name} con ${winner.totale}`);
+  },
+
+  mostra_classifica: function () {
+    console.log(`Classifica finale`);
+    this.players.forEach(player => {
+      console.log(`${player.name}: ${player.totale}`);
     });
   },
+}
 
-  aggiungiGiocatore: function (nome) {
-    let nuovo = {
-      name: nome,
-      scores: []
-    };
-    for (let i = 0; i < 10; i++) {
-      nuovo.scores.push(Math.floor(Math.random() * 10) + 1);
-    }
-    this.players.push(nuovo);
-  },
-
-  aggiungiGiocatoreDOM: function () {
-    let nome = document.getElementById('nomeGiocatore').value.trim();
-    if (nome) {
-      this.aggiungiGiocatore(nome);
-      document.getElementById('nomeGiocatore').value = '';
-    }
-  },
-
-  classifica: function () {
-    this.calcolaTotali();
-    this.players.sort((a, b) => b.total - a.total);
-  },
-
-  getVincitore: function () {
-    const vincitore = this.players[0];
-    document.getElementById('vincitore').innerText = `${vincitore.name} con ${vincitore.total} punti`;
-  },
-
-  mostraClassifica: function () {
-    let ul = document.getElementById('listaClassifica');
-    ul.innerHTML = '';
-    this.players.forEach((player, index) => {
-      let li = document.createElement('li');
-      li.innerText = `${index + 1}. ${player.name} → ${player.total} punti`;
-      ul.appendChild(li);
-    });
-  }
-};
-
-window.onload = () => {
-  bowling.assegnaPunteggi();
-  bowling.classifica();
-  bowling.mostraClassifica();
-  bowling.getVincitore();
-};
+bowling.assegna_Punteggi();
+bowling.nuovo_player('Emanuele');
+bowling.punteggio_Giocatori();
+bowling.vincitore();
+bowling.mostra_classifica();
